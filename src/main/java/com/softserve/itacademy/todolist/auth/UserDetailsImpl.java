@@ -17,8 +17,8 @@ import java.util.List;
 public class UserDetailsImpl implements UserDetails {
     private static final long serialVersionUID = 1L;
     private Long id;
-    private String username;
-    private String email;
+    private String username; // in our project this is email
+//    private String email;
     //@JsonIgnore
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
@@ -29,7 +29,7 @@ public class UserDetailsImpl implements UserDetails {
         return new UserDetailsImpl(
                 user.getId(),
                 user.getUsername(),
-                user.getEmail(),
+//                user.getEmail(),
                 user.getPassword(),
                 authorities);
     }
