@@ -4,19 +4,17 @@ import com.softserve.itacademy.todolist.exception.NullEntityReferenceException;
 import com.softserve.itacademy.todolist.model.ToDo;
 import com.softserve.itacademy.todolist.repository.ToDoRepository;
 import com.softserve.itacademy.todolist.service.ToDoService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ToDoServiceImpl implements ToDoService {
 
     private final ToDoRepository todoRepository;
-
-    public ToDoServiceImpl(ToDoRepository todoRepository) {
-        this.todoRepository = todoRepository;
-    }
 
     @Override
     public ToDo create(ToDo todo) {

@@ -16,5 +16,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByEmail(username);
         return UserDetailsImpl.build(user);
     }
+
+
 }
 

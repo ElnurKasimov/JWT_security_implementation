@@ -11,6 +11,7 @@ import com.softserve.itacademy.todolist.model.User;
 import com.softserve.itacademy.todolist.service.RoleService;
 import com.softserve.itacademy.todolist.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
@@ -35,6 +37,7 @@ public class Auth {
     private final UserService userService;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
+    private final UserTransformer userTransformer;
 
  @PostMapping("/login")
  public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) {
@@ -55,8 +58,8 @@ public class Auth {
 
     @PostMapping("/signup")
     ResponseEntity<Void> createUser(@RequestBody UserRequest userRequest) {
-//        log.info("CONTROLLER POST /API/USERS/");
-        User newUser = UserTransformer.toEntity(userRequest);
+        log.info("CONTROLLER POST /AUTH/SIGNUP");
+        User newUser = userTransformer.toEntity(userRequest);
         newUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         newUser.setRole(roleService.findByName(userRequest.getRole().toUpperCase()));
         userService.create(newUser);

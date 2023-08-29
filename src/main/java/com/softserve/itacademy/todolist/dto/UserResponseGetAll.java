@@ -7,14 +7,14 @@ import lombok.Value;
 
 @Value
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class UserResponse {
+public class UserResponseGetAll {
     Long id;
     String firstName;
     String lastName;
     String email;
     String role;
 
-    public UserResponse(User user) {
+    public UserResponseGetAll(User user) {
         id = user.getId();
         firstName = user.getFirstName();
         lastName = user.getLastName();
