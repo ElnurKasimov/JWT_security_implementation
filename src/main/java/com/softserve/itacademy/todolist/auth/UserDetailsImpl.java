@@ -1,5 +1,6 @@
 package com.softserve.itacademy.todolist.auth;
 
+import com.softserve.itacademy.todolist.model.ExtendedUser;
 import com.softserve.itacademy.todolist.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +24,7 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public static UserDetailsImpl build(User user) {
+    public static UserDetails build(User user) {
         List<GrantedAuthority> authorities = Collections.singletonList(
                 new SimpleGrantedAuthority("ROLE_" + user.getRole().getName()));
         return new UserDetailsImpl(
@@ -31,12 +32,10 @@ public class UserDetailsImpl implements UserDetails {
                 user.getUsername(),
                 user.getPassword(),
                 authorities);
+
     }
 
-
-
-
-     @Override
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {return authorities;}
 
     @Override

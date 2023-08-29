@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,28 +61,43 @@ public class UserController {
 
 
     @PutMapping("/{id}")
-    @PostAuthorize("hasRole('ADMIN') or  #loggedUser.id == #id")
+//    @PreAuthorize("hasRole('ADMIN') or  #loggedUser.id == #id")
     ResponseEntity<Void>  updateUser(@PathVariable long id,
-                                     @RequestBody UserRequest userRequest,
-                                     @AuthenticationPrincipal UserDetailsImpl loggedUser,
-                                     Authentication authentication) {
+                                     @RequestBody UserRequest userRequest
+//                                     @AuthenticationPrincipal UserDetailsImpl loggedUser,
+//                                     Authentication authentication
+    ) {
         log.info("CONTROLLER PUT /API/USERS/" + id);
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        log.info("USER DETAILS {} and {} ", userDetails.getId(), userDetails.getUsername());
-//        log.info("PRINCIPAL  ID" + loggedUser.getId());
+//        if (authentication != null) {
+//            Object principal = authentication.getPrincipal();
+//            if (principal instanceof UserDetails) {
+//                UserDetails userDetails = (UserDetails) principal;
+//                log.info("USER DETAILS {} and {} ", userDetails.getUsername(), userDetails.getId());
+//                User fromDb = userService.readById(id);
+//                fromDb.setFirstName(userRequest.getFirstName());
+//                fromDb.setLastName(userRequest.getLastName());
+//                fromDb.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+//                fromDb.setRole(roleService.findByName(userRequest.getRole().toUpperCase()));
+//                userService.create(fromDb);
+//                return ResponseEntity.status(HttpStatus.CREATED)
+//                        .header("Location", "/api/users/" + fromDb.getId())
+//                        .build();
+//            }
+//        }
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         User fromDb = userService.readById(id);
-        fromDb.setFirstName(userRequest.getFirstName());
-        fromDb.setLastName(userRequest.getLastName());
-        fromDb.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-        fromDb.setRole(roleService.findByName(userRequest.getRole().toUpperCase()));
-        userService.create(fromDb);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .header("Location", "/api/users/" + fromDb.getId())
-                .build();
+                fromDb.setFirstName(userRequest.getFirstName());
+                fromDb.setLastName(userRequest.getLastName());
+                fromDb.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+                fromDb.setRole(roleService.findByName(userRequest.getRole().toUpperCase()));
+                userService.create(fromDb);
+                return ResponseEntity.status(HttpStatus.CREATED)
+                        .header("Location", "/api/users/" + fromDb.getId())
+                        .build();
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or principal.id == #id")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteUser(@PathVariable long id) {
         log.info("CONTROLLER DELETE /API/USERS/" + id);
