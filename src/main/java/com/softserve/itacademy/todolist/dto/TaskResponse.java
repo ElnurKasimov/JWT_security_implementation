@@ -8,7 +8,7 @@ import lombok.Value;
 
 @Value
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class TaskResponseDto {
+public class TaskResponse {
     Long id;
     String name;
     Priority priority;
@@ -16,7 +16,7 @@ public class TaskResponseDto {
     String state;
 
 
-    public TaskResponseDto(Task task) {
+    public TaskResponse(Task task) {
         id = task.getId();
         name = task.getName();
         priority = task.getPriority();
