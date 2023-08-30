@@ -1,12 +1,11 @@
 package com.softserve.itacademy.todolist.controller;
 
 import com.softserve.itacademy.todolist.dto.TaskDto;
-import com.softserve.itacademy.todolist.dto.TaskResponseDto;
+import com.softserve.itacademy.todolist.dto.TaskResponse;
 import com.softserve.itacademy.todolist.dto.TaskTransformer;
 import com.softserve.itacademy.todolist.model.Task;
 import com.softserve.itacademy.todolist.model.ToDo;
 import com.softserve.itacademy.todolist.service.*;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
