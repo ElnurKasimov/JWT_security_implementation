@@ -1,6 +1,7 @@
 package com.softserve.itacademy.todolist.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -17,25 +18,28 @@ import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler { // consider extending ResponseEntityExceptionHandler
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler { // consider extending ResponseEntityExceptionHandler
+    @ExceptionHandler(NullEntityReferenceException.class)
+    public ResponseEntity<Object> handleNullEntityReferenceException(NullEntityReferenceException ex, WebRequest request) {
+        log.error("NullEntityReferenceException: {}", ex.getMessage());
+        return handleExceptionInternal(ex, "Entity references to null", new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
 
-    @ExceptionHandler
-    public ResponseEntity<?> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
-        // todo
-        return ResponseEntity.badRequest().body(ex.getBindingResult().toString());
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException ex, WebRequest request) {
+        log.error("EntityNotFoundException: {}", ex.getMessage());
+        return handleExceptionInternal(ex, "Entity not found", new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> handleNullEntityReferenceException(NullEntityReferenceException ex) {
-        // todo
-        return ResponseEntity.badRequest().body(ex.getMessage());
+    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
+        log.error("AccessDeniedException: {}", ex.getMessage());
+        return handleExceptionInternal(ex, "Access denied", new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException ex) {
-        // todo: add logging
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<Object> handleOtherExceptions(Exception ex, WebRequest request) {
+        log.error("Unhandled exception: {}", ex.getMessage());
+        return handleExceptionInternal(ex, "An error occurred", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
-
-    // todo: add more handlers
 }
