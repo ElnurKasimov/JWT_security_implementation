@@ -37,7 +37,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskResponseDto> create(@PathVariable(value = "todo_id") Long toDoId, @RequestBody TaskDto taskDto) {
+    public ResponseEntity<TaskResponse> create(@PathVariable(value = "todo_id") Long toDoId, @RequestBody TaskDto taskDto) {
         ToDo toDo = toDoService.readById(toDoId);
         logger.info("ToDo with id " + toDoId + " is present");
 
@@ -52,7 +52,7 @@ public class TaskController {
 
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    public ResponseEntity<TaskResponseDto> read(@PathVariable(value = "todo_id") Long toDoId, @PathVariable(value = "id") Long id) {
+    public ResponseEntity<TaskResponse> read(@PathVariable(value = "todo_id") Long toDoId, @PathVariable(value = "id") Long id) {
         ToDo toDo = toDoService.readById(toDoId);
         Task task = taskService.readById(id);
         if(!task.getTodo().equals(toDo))
@@ -66,7 +66,7 @@ public class TaskController {
 
     @PutMapping(value = "/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    public ResponseEntity<TaskResponseDto> update(@PathVariable(value = "todo_id") Long todoId, @PathVariable(value = "id") Long id,
+    public ResponseEntity<TaskResponse> update(@PathVariable(value = "todo_id") Long todoId, @PathVariable(value = "id") Long id,
                                                   @RequestBody TaskDto taskDto) {
         if (taskDto == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -103,7 +103,7 @@ public class TaskController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    public ResponseEntity<List<TaskResponseDto>> getAll(@PathVariable(value = "todo_id") Long todoId) {
+    public ResponseEntity<List<TaskResponse>> getAll(@PathVariable(value = "todo_id") Long todoId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(toDoService.readById(todoId).getTasks().stream()
                         .map(TaskResponseDto::new)
