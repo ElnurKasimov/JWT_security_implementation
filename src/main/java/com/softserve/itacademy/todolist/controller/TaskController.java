@@ -47,7 +47,7 @@ public class TaskController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header("Location", "api/tasks/" + newTask.getId())
-                .body(new TaskResponseDto(newTask));
+                .body(new TaskResponse(newTask));
     }
 
     @GetMapping(value = "/{id}")
@@ -61,7 +61,7 @@ public class TaskController {
         logger.info("Task with id " + task.getId() + " was found");
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new TaskResponseDto(task));
+                .body(new TaskResponse(task));
     }
 
     @PutMapping(value = "/{id}")
@@ -86,7 +86,7 @@ public class TaskController {
         logger.info("Task with ID " + task.getId() + " was updated successfully");
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new TaskResponseDto(task));
+                .body(new TaskResponse(task));
     }
 
     @DeleteMapping(value = "/{id}")
@@ -106,7 +106,7 @@ public class TaskController {
     public ResponseEntity<List<TaskResponse>> getAll(@PathVariable(value = "todo_id") Long todoId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(toDoService.readById(todoId).getTasks().stream()
-                        .map(TaskResponseDto::new)
+                        .map(TaskResponse::new)
                         .collect(Collectors.toList())
                 );
     }
