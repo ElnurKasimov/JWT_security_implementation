@@ -6,11 +6,15 @@ import com.softserve.itacademy.todolist.dto.TaskTransformer;
 import com.softserve.itacademy.todolist.model.Task;
 import com.softserve.itacademy.todolist.model.ToDo;
 import com.softserve.itacademy.todolist.service.*;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,8 +51,13 @@ public class TaskController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<TaskResponseDto> read(@PathVariable(value = "id") Long id) {
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResponseEntity<TaskResponseDto> read(@PathVariable(value = "todo_id") Long toDoId, @PathVariable(value = "id") Long id) {
+        ToDo toDo = toDoService.readById(toDoId);
         Task task = taskService.readById(id);
+        if(!task.getTodo().equals(toDo))
+            throw new AccessDeniedException("Access denied reading task");
+
         logger.info("Task with id " + task.getId() + " was found");
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -56,9 +65,14 @@ public class TaskController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<TaskResponseDto> update(@PathVariable(value = "id") Long id, @RequestBody TaskDto taskDto) {
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResponseEntity<TaskResponseDto> update(@PathVariable(value = "todo_id") Long todoId, @PathVariable(value = "id") Long id,
+                                                  @RequestBody TaskDto taskDto) {
         if (taskDto == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        if(taskDto.getTodoId() != todoId) {
+            throw new AccessDeniedException("Access denied updating task");
         }
         logger.info("TaskDto with Name: " + taskDto.getName() + ", Priority: " + taskDto.getPriority() +
                 ", ToDoId" + taskDto.getTodoId() + " and StateID: " + taskDto.getStateId());
@@ -76,7 +90,11 @@ public class TaskController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Object> delete(@PathVariable(value = "id") Long id) {
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResponseEntity<Object> delete(@PathVariable(value = "user_id") Long userId, @PathVariable(value = "id") Long id) {
+        if(!userId.equals(taskService.readById(id).getTodo().getOwner().getId())) {
+            throw new AccessDeniedException("Access denied deleting task");
+        }
         taskService.delete(id);
         logger.info("Task with ID " + id + " was deleted successfully");
 
@@ -84,9 +102,10 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskResponseDto>> getAll() {
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResponseEntity<List<TaskResponseDto>> getAll(@PathVariable(value = "todo_id") Long todoId) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(taskService.getAll().stream()
+                .body(toDoService.readById(todoId).getTasks().stream()
                         .map(TaskResponseDto::new)
                         .collect(Collectors.toList())
                 );
