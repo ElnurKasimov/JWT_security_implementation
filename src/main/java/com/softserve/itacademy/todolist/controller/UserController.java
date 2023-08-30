@@ -61,8 +61,9 @@ public class UserController {
 
 
     @PutMapping("/{id}")
-//    @PreAuthorize("hasRole('ADMIN') or @userServiceImpl.readById(#id).getId() == #id")
-    @PreAuthorize("hasRole('ADMIN') or @userAccess.isOwner(#id)")
+    @PreAuthorize("hasRole('ADMIN') or @userServiceImpl.readById(#id).getEmail() == authentication.name")
+//    @PreAuthorize("hasRole('ADMIN') or @userAccess.isOwner(#id)")
+//    this variant also works but demands one more class(namely UserAccess)
 
     ResponseEntity<Void>  updateUser(@PathVariable long id,
                                      @RequestBody UserRequest userRequest) {
