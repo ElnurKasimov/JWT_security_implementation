@@ -61,30 +61,11 @@ public class UserController {
 
 
     @PutMapping("/{id}")
-//    @PreAuthorize("hasRole('ADMIN') or  #loggedUser.id == #id")
+//    @PreAuthorize("hasRole('ADMIN') or @userServiceImpl.readById(#id).getId() == #id")
+    @PreAuthorize("hasRole('ADMIN') or @userAccess.isOwner(#id)")
+
     ResponseEntity<Void>  updateUser(@PathVariable long id,
-                                     @RequestBody UserRequest userRequest
-//                                     @AuthenticationPrincipal UserDetailsImpl loggedUser,
-//                                     Authentication authentication
-    ) {
-        log.info("CONTROLLER PUT /API/USERS/" + id);
-//        if (authentication != null) {
-//            Object principal = authentication.getPrincipal();
-//            if (principal instanceof UserDetails) {
-//                UserDetails userDetails = (UserDetails) principal;
-//                log.info("USER DETAILS {} and {} ", userDetails.getUsername(), userDetails.getId());
-//                User fromDb = userService.readById(id);
-//                fromDb.setFirstName(userRequest.getFirstName());
-//                fromDb.setLastName(userRequest.getLastName());
-//                fromDb.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-//                fromDb.setRole(roleService.findByName(userRequest.getRole().toUpperCase()));
-//                userService.create(fromDb);
-//                return ResponseEntity.status(HttpStatus.CREATED)
-//                        .header("Location", "/api/users/" + fromDb.getId())
-//                        .build();
-//            }
-//        }
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                                     @RequestBody UserRequest userRequest) {
         User fromDb = userService.readById(id);
                 fromDb.setFirstName(userRequest.getFirstName());
                 fromDb.setLastName(userRequest.getLastName());
