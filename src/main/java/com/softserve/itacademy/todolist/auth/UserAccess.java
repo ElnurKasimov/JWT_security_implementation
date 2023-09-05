@@ -1,5 +1,4 @@
 package com.softserve.itacademy.todolist.auth;
-
 import com.softserve.itacademy.todolist.model.User;
 import com.softserve.itacademy.todolist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

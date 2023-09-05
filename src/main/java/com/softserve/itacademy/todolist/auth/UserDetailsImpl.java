@@ -1,6 +1,4 @@
 package com.softserve.itacademy.todolist.auth;
-
-import com.softserve.itacademy.todolist.model.ExtendedUser;
 import com.softserve.itacademy.todolist.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
